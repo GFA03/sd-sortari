@@ -8,7 +8,7 @@
 #include <functional>
 #include "sorter.h"
 
-bool vectorSorter::sortcheck(const std::vector<long long int> &v)
+bool VectorSorter::sortcheck(const std::vector<long long int> &v)
 {
     for(int i = 0; i < v.size()-1; i++)
         if(v[i] > v[i+1])
@@ -16,7 +16,7 @@ bool vectorSorter::sortcheck(const std::vector<long long int> &v)
     return true;
 }
 
-void vectorSorter::mergesort(std::vector<long long int> &v, int left, int right)
+void VectorSorter::mergesort(std::vector<long long int> &v, int left, int right)
 {
     if(left < right)
     {
@@ -41,7 +41,7 @@ void vectorSorter::mergesort(std::vector<long long int> &v, int left, int right)
     }
 }
 
-int vectorSorter::partition(std::vector<long long int> &v, int left, int right)
+int VectorSorter::partition(std::vector<long long int> &v, int left, int right)
 {
     long long i = left - 1,  j = right + 1, a = v[left], b = v[(left+right)/2], c = v[right], pivot;
     if((a >= b && a <= c) || (a >= c && a <= b)) pivot = a;
@@ -56,7 +56,7 @@ int vectorSorter::partition(std::vector<long long int> &v, int left, int right)
     }
 }
 
-void vectorSorter::quicksort(std::vector<long long int> &v, int left, int right)
+void VectorSorter::quicksort(std::vector<long long int> &v, int left, int right)
 {
     if(left >= 0 && right >= 0 && left < right)
     {
@@ -66,7 +66,7 @@ void vectorSorter::quicksort(std::vector<long long int> &v, int left, int right)
     }
 }
 
-std::tuple<long long, long long> vectorSorter::getmaxmin(const std::vector<long long int> &v)
+std::tuple<long long, long long> VectorSorter::getmaxmin(const std::vector<long long int> &v)
 {
     long long max = v[0], min = v[0];
     for(int i = 1; i < v.size(); i++)
@@ -78,11 +78,12 @@ std::tuple<long long, long long> vectorSorter::getmaxmin(const std::vector<long 
 }
 
 
-void vectorSorter::countsort(std::vector<long long int> &v)
+void VectorSorter::countsort(std::vector<long long int> &v)
 {
+    try{
     long long j = 0;
     auto [max, min] = getmaxmin(v);
-    long long tmp[max-min+1] = {0};
+    std::vector<long long int> tmp(max-min+1, 0);
     for(int i = 0; i < v.size(); i++)
         tmp[v[i]-min]++;
     for(int i = 0; i <= max-min; i++){
@@ -90,10 +91,13 @@ void vectorSorter::countsort(std::vector<long long int> &v)
             v[j++] = i + min;
             tmp[i]--;
         }
+    }}
+    catch(...){
+        
     }
 }
 
-void vectorSorter::shellsort(std::vector<long long int> &v)
+void VectorSorter::shellsort(std::vector<long long int> &v)
 {
     long long j;
     for(long long gap = v.size()/2; gap > 0; gap /= 2)
@@ -108,7 +112,7 @@ void vectorSorter::shellsort(std::vector<long long int> &v)
     }
 }
 
-void vectorSorter::radixsort(std::vector<long long int> &v)
+void VectorSorter::radixsort(std::vector<long long int> &v)
 {
     auto [greatest, smallest] = getmaxmin(v);
     std::vector<long long int> result(v.size()+1, 0);
@@ -135,7 +139,7 @@ void vectorSorter::radixsort(std::vector<long long int> &v)
     }
 }
 
-void vectorSorter::radixsort256(std::vector<long long int> &v)
+void VectorSorter::radixsort256(std::vector<long long int> &v)
 {
     auto [greatest, smallest] = getmaxmin(v);
     std::vector<long long int> result(v.size()+1, 0); 
@@ -162,7 +166,7 @@ void vectorSorter::radixsort256(std::vector<long long int> &v)
     }
 }
 
-void vectorSorter::numberGenerator(std::vector<long long int> &v, const long long &length, const long long &maxValue) {
+void VectorSorter::numberGenerator(std::vector<long long int> &v, const long long &length, const long long &maxValue) {
     std::random_device rd;     
     std::mt19937_64 eng(rd()); 
     std::uniform_int_distribution<unsigned long long> distr;
@@ -172,32 +176,76 @@ void vectorSorter::numberGenerator(std::vector<long long int> &v, const long lon
     }
 }
 
-void vectorSorter::copyVector(const std::vector<long long int> &v, std::vector<long long int> &k)
+void VectorSorter::copyVector(const std::vector<long long int> &v, std::vector<long long int> &k)
 {
     k.clear();
     for(long long i = 0; i < v.size(); i++)
         k.push_back(v[i]);
 }
 
-void vectorSorter::templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), const std::string filename, const long long &length, const long long &maxValue)
+void VectorSorter::templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), std::ofstream &f, const long long &length, const long long &maxValue)
 {
     auto start = std::chrono::high_resolution_clock::now();
     _sorting(v);
     auto stop = std::chrono::high_resolution_clock::now();
-    bool isSorted = vectorSorter::sortcheck(v);
+    bool isSorted = VectorSorter::sortcheck(v);
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    
+    f << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
+}
+
+void VectorSorter::templateOutQuickAndMerge(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&, int, int), std::ofstream &f, const long long &length, const long long &maxValue)
+{
+    auto start = std::chrono::high_resolution_clock::now();
+    _sorting(v, 0, v.size());
+    auto stop = std::chrono::high_resolution_clock::now();
+    bool isSorted = VectorSorter::sortcheck(v);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    f << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
 }
 
 int main(){
+
+    std::vector<long long int> v;  
+    std::vector<long long int> k;
+    std::ofstream f2("stats/quicksort.txt");
+    std::ofstream f3("stats/mergesort.txt");
+    std::ofstream f4("stats/countsort.txt");
+    std::ofstream f5("stats/shellsort.txt");
+    std::ofstream f6("stats/radixsort.txt");
+    std::ofstream f7("stats/radixsort256.txt");
+    for(long long length = 100; length <= 100000000; length *= 10)
+    {
+        std::cout << "length: " << length << "\nmaxValue: ";
+        for(long long maxValue = 100; maxValue <= 10000000000 ; maxValue *= 10)
+        {    
+            std::cout << maxValue << ' ';
+            VectorSorter::numberGenerator(v, length, maxValue);
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOutQuickAndMerge(k, VectorSorter::quicksort, f2, length, maxValue); 
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOutQuickAndMerge(k, VectorSorter::mergesort, f3, length, maxValue); 
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOut(k, VectorSorter::countsort, f4, length, maxValue); 
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOut(k, VectorSorter::shellsort, f5, length, maxValue); 
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOut(k, VectorSorter::radixsort, f6, length, maxValue); 
+            VectorSorter::copyVector(v, k);
+            VectorSorter::templateOut(k, VectorSorter::radixsort256, f7, length, maxValue); 
+        }
+    }
+
+
+//------------------------------------------------------------------------------------------------
+
     // numberGenerator(v, 100, 10000);
     // auto start = std::chrono::high_resolution_clock::now();
-    // vectorSorter::mergesort(v, 0, v.size()-1);
-    // vectorSorter::quicksort(v, 0, v.size()-1);
-    // vectorSorter::countsort(v);
-    // vectorSorter::shellsort(v);
-    // vectorSorter::radixsort(v);
-    // vectorSorter::radixsort256(v);
+    // VectorSorter::mergesort(v, 0, v.size()-1);
+    // VectorSorter::quicksort(v, 0, v.size()-1);
+    // VectorSorter::countsort(v);
+    // VectorSorter::shellsort(v);
+    // VectorSorter::radixsort(v);
+    // VectorSorter::radixsort256(v);
 
     // auto stop = std::chrono::high_resolution_clock::now();
     
@@ -206,5 +254,5 @@ int main(){
     // for(int i = 0; i < v.size(); i++)
     //     f2 << v[i] << " ";
     // std::cout << "\n";
-    // std::cout << vectorSorter::sortcheck(v);
+    // std::cout << VectorSorter::sortcheck(v);
 }
