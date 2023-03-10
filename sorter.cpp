@@ -69,10 +69,10 @@ void VectorSorter::quicksort(std::vector<long long int> &v, int left, int right)
 std::tuple<long long, long long> VectorSorter::getmaxmin(const std::vector<long long int> &v)
 {
     long long max = v[0], min = v[0];
-    for(int i = 1; i < v.size(); i++)
+    for(const auto& elem : v)
     {
-        if(v[i] > max) max = v[i];
-        if(v[i] < min) min = v[i];
+        if(elem > max) max = elem;
+        if(elem < min) min = elem;
     }
     return {max, min};
 }
@@ -84,8 +84,8 @@ void VectorSorter::countsort(std::vector<long long int> &v)
     long long j = 0;
     auto [max, min] = getmaxmin(v);
     std::vector<long long int> tmp(max-min+1, 0);
-    for(int i = 0; i < v.size(); i++)
-        tmp[v[i]-min]++;
+    for(const auto& elem : v)
+        tmp[elem-min]++;
     for(int i = 0; i <= max-min; i++){
         while(tmp[i] > 0){
             v[j++] = i + min;
@@ -120,9 +120,9 @@ void VectorSorter::radixsort(std::vector<long long int> &v)
     while(greatest/digitplace > 0)
     {
         int count[10] = {0};
-        for(int i = 0; i < v.size(); i++)
+        for(const auto& elem : v)
         {
-            count[(v[i]/digitplace) % 10]++;
+            count[(elem/digitplace) % 10]++;
         }
         for(int i = 1; i < 10; i++)
         {
@@ -147,9 +147,9 @@ void VectorSorter::radixsort256(std::vector<long long int> &v)
     while(greatest/digitplace > 0)
     {
         long long count[256] = {0};
-        for(int i = 0; i < v.size(); i++)
+        for(const auto& elem : v)
         {
-            count[(v[i]/digitplace) % 256]++;
+            count[(elem/digitplace) % 256]++;
         }
         for(int i = 1; i < 256; i++)
         {
@@ -179,8 +179,8 @@ void VectorSorter::numberGenerator(std::vector<long long int> &v, const long lon
 void VectorSorter::copyVector(const std::vector<long long int> &v, std::vector<long long int> &k)
 {
     k.clear();
-    for(long long i = 0; i < v.size(); i++)
-        k.push_back(v[i]);
+    for(const auto& elem : v)
+        k.push_back(elem);
 }
 
 void VectorSorter::templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), std::ofstream &f, const long long &length, const long long &maxValue)
@@ -213,10 +213,10 @@ int main(){
     std::ofstream f5("stats/shellsort.txt");
     std::ofstream f6("stats/radixsort.txt");
     std::ofstream f7("stats/radixsort256.txt");
-    for(long long length = 100; length <= 100000000; length *= 10)
+    for(long long length = 100; length <= 10000000; length *= 10)
     {
-        std::cout << "length: " << length << "\nmaxValue: ";
-        for(long long maxValue = 100; maxValue <= 10000000000 ; maxValue *= 10)
+        std::cout << "\nlength: " << length << "\nmaxValue: ";
+        for(long long maxValue = 100; maxValue <= 1000000000 ; maxValue *= 10)
         {    
             std::cout << maxValue << ' ';
             VectorSorter::numberGenerator(v, length, maxValue);

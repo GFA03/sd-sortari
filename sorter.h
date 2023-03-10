@@ -1,9 +1,12 @@
-#include <iostream>
-#include <vector>
-#include <chrono>
-#include <tuple>
+#ifndef SD_SORTER_H
+#define SD_SORTER_H
 
-class vectorSorter
+
+#include <vector>
+#include <tuple>
+#include <chrono>
+
+class VectorSorter
 {
     static int partition(std::vector<long long int> &v, int left, int right);
     static std::tuple<long long, long long> getmaxmin(const std::vector<long long int> &v);
@@ -24,7 +27,11 @@ class vectorSorter
 
     static void copyVector(const std::vector<long long int> &v, std::vector<long long int> &k);
 
-    static void templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), const std::string filename, const long long &length, const long long &maxValue);
+    static void templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), std::ofstream &f, const long long &length, const long long &maxValue);
+
+    static void templateOutQuickAndMerge(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&, int, int), std::ofstream &f, const long long &length, const long long &maxValue);
 
     static void numberGenerator(std::vector<long long int> &v, const long long &length, const long long &maxValue);
 };
+
+#endif //SD_SORTER_H
