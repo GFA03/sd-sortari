@@ -4,6 +4,7 @@
 #include <chrono>
 #include <random>
 #include <tuple>
+#include <algorithm>
 #include <string>
 #include <functional>
 #include "sorter.h"
@@ -81,14 +82,18 @@ std::tuple<long long, long long> VectorSorter::getmaxmin(const std::vector<long 
 void VectorSorter::countsort(std::vector<long long int> &v)
 {
     try{
-    long long j = 0;
-    auto [max, min] = getmaxmin(v);
+    long long j = 0, max = 0, min = v[0];
+    for(const auto& elem : v)
+    {
+        if(elem > max) max = elem;
+        if(elem < min) min = elem;
+    }
     std::vector<long long int> tmp(max-min+1, 0);
     for(const auto& elem : v)
         tmp[elem-min]++;
     for(int i = 0; i <= max-min; i++){
         while(tmp[i] > 0){
-            v[j++] = i + min;
+            v[j++] = i;
             tmp[i]--;
         }
     }}
@@ -213,6 +218,7 @@ int main(){
     std::ofstream f5("stats/shellsort.txt");
     std::ofstream f6("stats/radixsort.txt");
     std::ofstream f7("stats/radixsort256.txt");
+    std::ofstream f8("stats/introsort.txt");
     for(long long length = 100; length <= 10000000; length *= 10)
     {
         std::cout << "\nlength: " << length << "\nmaxValue: ";
@@ -225,34 +231,20 @@ int main(){
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOutQuickAndMerge(k, VectorSorter::mergesort, f3, length, maxValue); 
             VectorSorter::copyVector(v, k);
-            VectorSorter::templateOut(k, VectorSorter::countsort, f4, length, maxValue); 
+            VectorSorter::templateOut(v, VectorSorter::countsort, f4, length, maxValue); 
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOut(k, VectorSorter::shellsort, f5, length, maxValue); 
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOut(k, VectorSorter::radixsort, f6, length, maxValue); 
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOut(k, VectorSorter::radixsort256, f7, length, maxValue); 
+            auto start = std::chrono::high_resolution_clock::now();
+            std::sort(v.begin(), v.end());
+            auto stop = std::chrono::high_resolution_clock::now();
+            bool isSorted = VectorSorter::sortcheck(v);
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            f8 << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
         }
     }
 
-
-//------------------------------------------------------------------------------------------------
-
-    // numberGenerator(v, 100, 10000);
-    // auto start = std::chrono::high_resolution_clock::now();
-    // VectorSorter::mergesort(v, 0, v.size()-1);
-    // VectorSorter::quicksort(v, 0, v.size()-1);
-    // VectorSorter::countsort(v);
-    // VectorSorter::shellsort(v);
-    // VectorSorter::radixsort(v);
-    // VectorSorter::radixsort256(v);
-
-    // auto stop = std::chrono::high_resolution_clock::now();
-    
-    // // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    // std::cout << "Durata de rulare a algoritmului de sortare: " << duration.count() << " microseconds" << "\n";
-    // for(int i = 0; i < v.size(); i++)
-    //     f2 << v[i] << " ";
-    // std::cout << "\n";
-    // std::cout << VectorSorter::sortcheck(v);
 }
