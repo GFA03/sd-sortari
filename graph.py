@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import seaborn as sns
-import random
 from os import listdir
 from os.path import isfile, join
 
@@ -30,9 +30,7 @@ def readFiles():
     return time
 
 def drawGraph():
-    time = readFiles()
-    a = np.arange(1e5, 1e8, (1e8-1e5)/48)
-    shellsort = [x for x in [v for k,v in time["shellsort"].items()]]   
+    time = readFiles()   
     for (k,v) in time.items():
         sns.set_style("whitegrid")
         plt.xscale('log')
@@ -42,12 +40,12 @@ def drawGraph():
             seconds = [v[1] for v in stats if v[0] > 1e5]
             maxValue = [v[0] for v in stats if v[0] > 1e5]
             plt.plot(np.array(maxValue), np.array(seconds), label = "size: " + str(length))
-
+            
         plt.xlabel('max value')
         plt.ylabel('microseconds')
         plt.title(str(k))
         plt.legend()
-        plt.savefig("stats/" + k + ".png")
+        plt.savefig("stats/" + k + ".png", dpi=1200)
         plt.close()
 
     
@@ -62,4 +60,3 @@ drawGraph()
 # plt.xlabel('length')
 # plt.ylabel('microseconds')
 # plt.show()
-

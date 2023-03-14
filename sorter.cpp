@@ -4,11 +4,10 @@
 #include <chrono>
 #include <random>
 #include <tuple>
-#include <algorithm>
 #include <string>
+#include <algorithm>
 #include <functional>
 #include "sorter.h"
-
 bool VectorSorter::sortcheck(const std::vector<long long int> &v)
 {
     for(int i = 0; i < v.size()-1; i++)
@@ -70,10 +69,10 @@ void VectorSorter::quicksort(std::vector<long long int> &v, int left, int right)
 std::tuple<long long, long long> VectorSorter::getmaxmin(const std::vector<long long int> &v)
 {
     long long max = v[0], min = v[0];
-    for(const auto& elem : v)
+    for(int i = 1; i < v.size(); i++)
     {
-        if(elem > max) max = elem;
-        if(elem < min) min = elem;
+        if(v[i] > max) max = v[i];
+        if(v[i] < min) min = v[i];
     }
     return {max, min};
 }
@@ -82,23 +81,20 @@ std::tuple<long long, long long> VectorSorter::getmaxmin(const std::vector<long 
 void VectorSorter::countsort(std::vector<long long int> &v)
 {
     try{
-    long long j = 0, max = 0, min = v[0];
-    for(const auto& elem : v)
-    {
-        if(elem > max) max = elem;
-        if(elem < min) min = elem;
-    }
+    long long j = 0;
+    auto [max, min] = getmaxmin(v);
     std::vector<long long int> tmp(max-min+1, 0);
-    for(const auto& elem : v)
-        tmp[elem-min]++;
+    for(int i = 0; i < v.size(); i++)
+        tmp[v[i]-min]++;
     for(int i = 0; i <= max-min; i++){
         while(tmp[i] > 0){
-            v[j++] = i;
+            v[j++] = i + min;
             tmp[i]--;
         }
     }}
-    catch(...){
-        
+    catch(...)
+    {
+
     }
 }
 
@@ -125,9 +121,9 @@ void VectorSorter::radixsort(std::vector<long long int> &v)
     while(greatest/digitplace > 0)
     {
         int count[10] = {0};
-        for(const auto& elem : v)
+        for(int i = 0; i < v.size(); i++)
         {
-            count[(elem/digitplace) % 10]++;
+            count[(v[i]/digitplace) % 10]++;
         }
         for(int i = 1; i < 10; i++)
         {
@@ -152,9 +148,9 @@ void VectorSorter::radixsort256(std::vector<long long int> &v)
     while(greatest/digitplace > 0)
     {
         long long count[256] = {0};
-        for(const auto& elem : v)
+        for(int i = 0; i < v.size(); i++)
         {
-            count[(elem/digitplace) % 256]++;
+            count[(v[i]/digitplace) % 256]++;
         }
         for(int i = 1; i < 256; i++)
         {
@@ -175,7 +171,7 @@ void VectorSorter::numberGenerator(std::vector<long long int> &v, const long lon
     std::random_device rd;     
     std::mt19937_64 eng(rd()); 
     std::uniform_int_distribution<unsigned long long> distr;
-
+    v.clear();
     for(int i = 0;  i < length; i ++) {
         v.push_back(distr(eng) % (maxValue)); 
     }
@@ -184,8 +180,8 @@ void VectorSorter::numberGenerator(std::vector<long long int> &v, const long lon
 void VectorSorter::copyVector(const std::vector<long long int> &v, std::vector<long long int> &k)
 {
     k.clear();
-    for(const auto& elem : v)
-        k.push_back(elem);
+    for(int i = 0; i < v.size(); ++i)
+        k.push_back(v[i]);
 }
 
 void VectorSorter::templateOut(std::vector <long long int> &v, void (*_sorting)(std::vector <long long int>&), std::ofstream &f, const long long &length, const long long &maxValue)
@@ -212,17 +208,18 @@ int main(){
 
     std::vector<long long int> v;  
     std::vector<long long int> k;
+
     std::ofstream f2("stats/quicksort.txt");
     std::ofstream f3("stats/mergesort.txt");
     std::ofstream f4("stats/countsort.txt");
     std::ofstream f5("stats/shellsort.txt");
     std::ofstream f6("stats/radixsort.txt");
     std::ofstream f7("stats/radixsort256.txt");
-    std::ofstream f8("stats/introsort.txt");
-    for(long long length = 100; length <= 10000000; length *= 10)
+    std::ofstream f8("stats/sort.txt");
+    for(long long length = 100; length <= 100000000; length *= 10)
     {
         std::cout << "\nlength: " << length << "\nmaxValue: ";
-        for(long long maxValue = 100; maxValue <= 1000000000 ; maxValue *= 10)
+        for(long long maxValue = 100; maxValue <= 10000000000 ; maxValue *= 10)
         {    
             std::cout << maxValue << ' ';
             VectorSorter::numberGenerator(v, length, maxValue);
@@ -231,7 +228,7 @@ int main(){
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOutQuickAndMerge(k, VectorSorter::mergesort, f3, length, maxValue); 
             VectorSorter::copyVector(v, k);
-            VectorSorter::templateOut(v, VectorSorter::countsort, f4, length, maxValue); 
+            VectorSorter::templateOut(k, VectorSorter::countsort, f4, length, maxValue);
             VectorSorter::copyVector(v, k);
             VectorSorter::templateOut(k, VectorSorter::shellsort, f5, length, maxValue); 
             VectorSorter::copyVector(v, k);
@@ -246,5 +243,4 @@ int main(){
             f8 << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
         }
     }
-
 }
