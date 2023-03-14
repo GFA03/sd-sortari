@@ -27,7 +27,7 @@ Made in python graphics which shows their complexity and how the maximum value a
 
 ## Radixsort (base 256)
 
-(O(ND), N - number of elements, D - number of digits in the largest number)
+(O(N log<sub>256</sub> N), N - number of elements)
 
 ![Radixsort256](stats/radixsort256.png "Radixsort256")
 
