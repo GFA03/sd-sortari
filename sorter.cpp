@@ -23,21 +23,24 @@ void VectorSorter::mergesort(std::vector<long long int> &v, int left, int right)
         int m = left / 2 + right / 2;
         mergesort(v, left, m);
         mergesort(v, m+1, right);
-        std::vector<long long int> tmp(right-left+1,0);
-        int i = left, j = m+1, k = 0;
-        while(i <= m && j <= right)
+        std::vector<long long int> tmp;
+        int i = left, j = m+1;
+        if(v[m] > v[m+1])
         {
-            if(v[i] < v[j])
-                tmp[k++] = v[i++];
-            else
-                tmp[k++] = v[j++];
+            while(i <= m && j <= right)
+            {
+                if(v[i] < v[j])
+                    tmp.push_back(v[i++]);
+                else
+                    tmp.push_back(v[j++]);
+            }
+            while(i <= m)
+                tmp.push_back(v[i++]);
+            while(j <= right)
+                tmp.push_back(v[j++]);
+            for(i = left, j = 0; i <= right; i++, j++)
+                v[i] = tmp[j];
         }
-        while(i <= m)
-            tmp[k++] = v[i++];
-        while(j <= right)
-            tmp[k++] = v[j++];
-        for(i = left, j = 0; i <= right; i++, j++)
-            v[i] = tmp[j];
     }
 }
 
@@ -147,7 +150,7 @@ void VectorSorter::radixsort256(std::vector<long long int> &v)
     long long digitplace = 1; 
     while(greatest/digitplace > 0)
     {
-        long long count[256] = {0};
+        int count[256] = {0};
         for(int i = 0; i < v.size(); i++)
         {
             count[(v[i]/digitplace) % 256]++;
@@ -163,7 +166,7 @@ void VectorSorter::radixsort256(std::vector<long long int> &v)
         }
         for(int i = 0; i < v.size(); i++)
             v[i] = result[i];
-            digitplace = digitplace << 8;
+        digitplace = digitplace << 8;
     }
 }
 
@@ -215,7 +218,7 @@ int main(){
     std::ofstream f5("stats/shellsort.txt");
     std::ofstream f6("stats/radixsort.txt");
     std::ofstream f7("stats/radixsort256.txt");
-    std::ofstream f8("stats/sort.txt");
+    std::ofstream f8("stats/introsort.txt");
     for(long long length = 100; length <= 100000000; length *= 10)
     {
         std::cout << "\nlength: " << length << "\nmaxValue: ";
