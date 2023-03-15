@@ -10,8 +10,25 @@ Made in python graphics which shows their complexity and how the maximum value a
 
 ---
 
+It will follow a series of 8 photos to show how the maximum value plays a role in time efficiency in sorting algorithms.
+
+![](stats/Sortari0.png)
+![](stats/Sortari1.png)
+![](stats/Sortari2.png)
+![](stats/Sortari3.png)
+![](stats/Sortari4.png)
+![](stats/Sortari5.png)
+![](stats/Sortari6.png)
+![](stats/Sortari7.png)
+
+Until 10^8 maximum value, **Countsort** is doing a good job of being the most efficient. Afterwards, **Radixsort** in base 256 is the most efficient.
+
+---
+
 ## Countsort 
 (O(N+K), N - number of elements, K - range of the elements)
+
+Good sorting algorithm if the range of the elements is small(10^8).
 
 ![Countsort](stats/countsort.png "Countsort")
 
@@ -20,6 +37,8 @@ Made in python graphics which shows their complexity and how the maximum value a
 ## Radixsort 
 
 (O(ND), N - number of elements, D - number of digits in the largest number)
+
+Best sorting algorithm for natural numbers if it is used in base 256(Following example!)
 
 ![Radixsort](stats/radixsort.png "Radixsort")
 
@@ -52,3 +71,11 @@ Made in python graphics which shows their complexity and how the maximum value a
 (O(N log N), N - number of elements)
 
 ![Quicksort](stats/quicksort.png "Quicksort")
+
+---
+
+## End
+
+In the end, I want to emphasise how maximum value and array sizes affects time efficiency by showcasing an exception case (**all values of the array are equal to 1**)
+
+![](https://github.com/GFA03/sd-sortari/blob/main/stats%20max%20value%20%3D%201/Sortari.png)
