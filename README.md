@@ -6,7 +6,7 @@ Implemented 5 sorting algorithms: **Radixsort**(base 10 and base 256), **Shellso
 
 Compared them with C++ sorting algorithm (**Introsort**).
 
-Made in python graphics which shows their complexity and how the maximum value and the vector size affects time efficiency.
+Made in python graphics which shows their complexity and how the maximum value and the vector size affect time efficiency.
 
 ---
 
