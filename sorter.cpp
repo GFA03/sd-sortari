@@ -204,19 +204,80 @@ void VectorSorter::templateOutQuickAndMerge(std::vector <long long int> &v, void
     f << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
 }
 
+void testFromFile(){
+    std::ifstream f1("vector.txt");
+    std::vector<long long int> v, k;
+    int x, n;
+    f1 >> n;
+    for(int i = 0; i < n; ++i)
+    {
+        f1 >> x;
+        v.push_back(x);
+    }
+    // VectorSorter::numberGenerator(v, 10, 1e12);
+    VectorSorter::copyVector(v, k);
+    VectorSorter::countsort(k);
+    std::cout << "Count sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+
+    VectorSorter::copyVector(v, k);
+    VectorSorter::mergesort(k, 0, k.size()-1);
+    std::cout << "Merge sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+
+    VectorSorter::copyVector(v, k);
+    VectorSorter::quicksort(k, 0, k.size()-1);
+    std::cout << "Quick sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+    
+    VectorSorter::copyVector(v, k);
+    VectorSorter::radixsort(k);
+    std::cout << "Radix sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+    
+    VectorSorter::copyVector(v, k);
+    VectorSorter::radixsort256(k);
+    std::cout << "Radix sort base 256: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+    
+    VectorSorter::copyVector(v, k);
+    VectorSorter::shellsort(k);
+    std::cout << "Shell sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+    
+    VectorSorter::copyVector(v, k);
+    std::sort(k.begin(), k.end());
+    std::cout << "Intro sort: ";
+    for(auto elem: k)
+        std::cout << elem << " ";
+    std::cout << '\n';
+}
+
 int main(){
 
     std::vector<long long int> v;  
     std::vector<long long int> k;
-
-    std::ofstream f2("stats/quicksort.txt");
-    std::ofstream f3("stats/mergesort.txt");
-    std::ofstream f4("stats/countsort.txt");
-    std::ofstream f5("stats/shellsort.txt");
-    std::ofstream f6("stats/radixsort.txt");
-    std::ofstream f7("stats/radixsort256.txt");
-    std::ofstream f8("stats/sort.txt");
-    for(long long length = 100; length <= 100000000; length *= 10)
+    testFromFile();
+    // std::ofstream f2("stats/quicksort.txt");
+    // std::ofstream f3("stats/mergesort.txt");
+    // std::ofstream f4("stats/countsort.txt");
+    // std::ofstream f5("stats/shellsort.txt");
+    // std::ofstream f6("stats/radixsort.txt");
+    // std::ofstream f7("stats/radixsort256.txt");
+    // std::ofstream f8("stats/sort.txt");
+    /*for(long long length = 100; length <= 100000000; length *= 10)
     {
         std::cout << "\nlength: " << length << "\nmaxValue: ";
         for(long long maxValue = 100; maxValue <= 10000000000 ; maxValue *= 10)
@@ -242,5 +303,5 @@ int main(){
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             f8 << length << ' ' << maxValue << ' ' << (isSorted ? "Ok" : "Failed") << ' ' << duration.count() << '\n';
         }
-    }
+    }*/
 }
